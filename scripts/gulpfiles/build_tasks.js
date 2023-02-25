@@ -561,10 +561,13 @@ function getChunkOptions() {
     // Get array of files for just this chunk.
     const chunkFiles = jsFiles.splice(0, numJsFiles);
 
+    // Convert windows path separators into '/' so that the entrypoint lookup works as intended
+    const chunkEntries = chunks.map(chunk => chunk.entry.replace(/\\/g, '/'));
+
     // Figure out which chunk this is by looking for one of the
     // known chunk entrypoints in chunkFiles.  N.B.: O(n*m).  :-(
     const chunk = chunks.find(
-        chunk => chunkFiles.find(f => f.endsWith('/' + chunk.entry)));
+        (chunk, index) => chunkFiles.find(f => f.endsWith('/' + chunkEntries[index])));
     if (!chunk) throw new Error('Unable to identify chunk');
 
     // Replace nicknames with the names we chose.
